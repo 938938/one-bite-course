@@ -27,13 +27,155 @@ object.fnc(); // 프로퍼티 함수 실행
 
 console.log(`what : ${"what" in object}`); // object에 what이라는 객체가 있는지 없는지 확인
 
-const getName = (person) =>{
+//삼항연산자
+let a = 3;
+a >= 0 ? console.log("양수") : console.log("음수");
+// 조건식 ? 참일 때 수행 : 거짓일 때 수행;
+let b = [];
+const arrayStatus = b.length===0 ? "내용 없음" : "내용 있음"; // 참, 거짓 부분은 함수를 호출할 수도 있고 대입연산자로 결과를 값으로 받아볼 수 있음
+console.log(arrayStatus);
+
+let c =[];
+const result = a ? true : false; // true
+
+// 학점 계산 프로그램
+// 90점 이상 A+ , 50점 이상 B+ , 둘 다 아니면 F
+
+let score = 100;
+score >= 90 
+  ? console.log("A+")
+  : score >= 50 
+  ? console.log("B+") 
+  : console.log("F");
+// 삼항연상자는 연달아 쓸 수 있음 (중첩삼항연산자)
+// But. 가독성이 떨어지기 때문에 If 조건문을 사용하는게 더 좋음
+
+const getName = (person) => {
+  // if(!person){
+  //   return "객체가 아닙니다.";
+  // }
   // return person.name;
-  if(!person){
-    return "객체가 아닙니다";
-  }
-  return person.name;
+  const name = person && person.name;
+  return name || "객체가 아닙니다";
 };
-// let person = { name:"abc" };
-let person = null;
+
+// let person;
+let person = { name : "abc" };
 const name = getName(person);
+console.log(name);
+
+// 조건문 업그레이드
+function isKoreanFood(food){
+  // if(food ==="불고기" || food === "비빔밥" || food === "떡볶이"){
+  //   return true;
+  // }
+  if(["불고기", "떡볶이", "비빔밥"].includes(food)){
+    return true;
+  }
+  return false;
+}
+const food1 = isKoreanFood("불고기");
+const food2 = isKoreanFood("파스타");
+console.log(food1); // true
+console.log(food2); // false
+
+const getMeal = (mealType) =>{
+  if(mealType === "한식")return "불고기";
+  if(mealType === "양식")return "파스타";
+  if(mealType === "중식")return "멘보샤";
+  if(mealType === "일식")return "초밥";
+  return "없음";
+}
+
+const meal = {
+  한식 : "불고기",
+  중식 : "멘보샤",
+  양식 : "파스타",
+  일식 : "초밥",
+  인도식 : "카레"
+};
+const getMeal2 = (mealType) => {
+  return meal[mealType] || "없음";
+};
+console.log(getMeal2("한식"));
+
+// 비구조화 할당
+let arr = ["one","two","three"];
+// let one = arr[0];
+// let two = arr[1];
+// let three = arr[2];
+// 위와 아래는 같음
+let [one1, two1, three1] = arr; // 배열의 기본변수 비 구조화 할당.
+let [one2, two2, three2, four2 = 'default'] = ["one","two","three"]; // 이 경우 arr을 따로 지정할 필요x // 배열의 선언 분리 비 구조화 할당 // four2 의 경우 undefined이 뜸, 기본값을 지정할 수 있음(default)
+
+// 스왑
+let first = 10;
+let second = 20;
+[first, second] = [second, first];
+console.log(first, second); // 20, 10 . (변수 바뀜)
+
+// 객체의 비구조화 할당
+let object1 = { one:"one", two: "two", three:"three", keyname : "abc"};
+
+// let one = object.one;
+// let two = obejct.two;
+// let three = object.three;
+let {one, two, three, keyname:key_name, nothing = 'nothing' } = object; // 순서가 아니라 키 값을 기준으로 할당. :을 사용해서 다른 변수이름을 할당할 수 있음. 배열과 마찬가지로 디폴트값 설정 가능.
+
+
+// Spread 연산자 : 중복된 프로퍼티를 계속 작성해야 하는 경우 사용.
+const cookie = {
+  base : "cookie",
+  madeIn : "korea"
+};
+const cookie1 = {
+  base : "cookie",
+  madeIn : "korea",
+  toping : "chocochip"
+};
+const cookie2 = {
+  ...cookie, // 위의 base, madeIn을 쓴 것과 같은 효과. 스프레드 연산자. 
+  toping : "blueberry"
+};
+// 배열에도 사용 가능
+const noToping = ["촉촉한쿠키","안촉촉한쿠키"];
+const topingCookie = ["바나나쿠키","초코칩쿠키","말차쿠키","딸기쿠키"];
+const allCookies = [...noToping, ...topingCookie, "한정쿠키"];
+
+//동기&비동기
+
+//동기적 방식
+function taskA(){
+  console.log("A 작업 끝");
+}
+taskA();
+console.log("코드 끝");
+
+//비동기 방식
+function taskB(){
+  setTimeout(() => {
+    console.log("B 작업 끝")
+  }, 2000);
+}
+taskB();
+console.log("코드 끝"); // 코드 끝이 먼저 나온 후 B작업 끝
+//콜백함수 활용
+function taskC(a, b, cb){
+  setTimeout(() => {
+    const res = a + b;
+    cb(res);
+  }, 3000);
+}
+function taskD(a,cb){
+  setTimeout(() => {
+    const res = a*2;
+    cb(res);
+  }, 1000);
+}
+taskC(3,4,(res)=>{
+  console.log("C 작업 결과 :", res);
+});
+taskD(7, (res)=>{
+  console.log("D 작업 결과 :", res);
+}); // D작업(1초), B작업(2초), C작업(3초) 순서로 작업 완료
+
