@@ -179,3 +179,124 @@ taskD(7, (res)=>{
   console.log("D 작업 결과 :", res);
 }); // D작업(1초), B작업(2초), C작업(3초) 순서로 작업 완료
 
+console.clear();
+
+
+// Promise
+function isPositive(number,resolve,reject){
+  setTimeout(() => {
+    if(typeof number === 'number'){
+      //성공 resolve
+      resolve(number >= 0 ? "양수":"음수")
+    } else {
+      // 실패 reject
+      reject("주어진 값이 숫자가 아닙니다");
+    }
+  }, 2000);
+}
+
+function isPositiveP(number){ // isPositiveP의 반환 값 : Promise. 이 함수는 비동기 작업을 함.
+  const executor = (resolve, reject) =>{ // executor : 실행자
+    setTimeout(() => {
+      if(typeof number === 'number'){
+        //성공 resolve
+        resolve(number >= 0 ? "양수":"음수")
+      } else {
+        // 실패 reject
+        reject("주어진 값이 숫자가 아닙니다");
+      }
+    }, 2000);
+  };
+  const asyncTask = new Promise(executor); // Promise객체에 비동기작업의 실질적 실행자 함수를 넘겨줌. → 전달하는 순간 자동으로 바로 executor 함수 실행.
+  return asyncTask;
+}
+const res = isPositiveP([]);
+
+res
+  .then((res)=>{  // resolve -> then
+    console.log("성공", res)
+  })
+  .catch((err)=>{ // reject -> catch
+    console.log("실패", err)
+  });
+
+// isPositive("얍",(res)=>{
+//     console.log(`성공 ${res}`)
+//   },(err)=>{
+//     console.log(`실패 ${err}`)
+//   }
+// )
+
+// callback Hell → Promise
+function task1(a, b){
+  return new Promise((resolve, reject)=>{
+    setTimeout(() => {
+      const res = a + b;
+      resolve(res);
+    }, 3000);
+  });
+}
+function task2(a){
+  return new Promise((resolve, reject)=>{
+    setTimeout(() => {
+      const res = a * 2;
+      resolve(res);
+    }, 1000);
+  })
+}
+function task3(a){
+  return new Promise((resolve, reject)=>{
+    setTimeout(() => {
+      const res = a * -1;
+      resolve(res);
+    }, 2000);
+  })
+}
+//콜백지옥
+// task1(3, 4, (a_res)=>{
+//   console.log(a_res);
+//   task2(a_res, (b_res)=>{
+//     console.log(b_res);
+//     task3(b_res, (c_res)=>{
+//       console.log(c_res);
+//     });
+//   });
+// });
+const bPromiseResult = task1(5,1).then((a_res)=>{
+  console.log(a_res);
+  return task2(a_res);
+  // task2(a_res).then((b_res)=>{
+  //   console.log(b_res);
+  //   task3(b_res).then((c_res)=>{
+  //     console.log(c_res);
+  //   })
+  // })
+  }
+);
+console.log("프로미스는 이렇게 중간에 끊어서 다른거 수행할 수도 있음!");
+bPromiseResult.then((b_res)=>{
+    console.log(b_res);
+    return task3(b_res);
+  }).then((c_res)=>{
+    console.log(c_res);
+  }
+); // then 메서드를 계속해서 이어붙이는 것 : then chaining
+
+// async
+function delay (ms) {
+  return new Promise((resolve)=>{
+    setTimeout(resolve, ms);
+  })
+}
+async function helloAsync(){
+  await delay(3000); // await 키워드를 비동기 함수 앞에 호출하게 되면, 동기적인 함수철머 작동. async가 붙은 함수 내에서만 사용 가능.
+  return 'hello async';
+  // return delay(3000).then(()=>{
+  //   return 'hello async';
+  // });
+} // 함수에 async를 붙이면 자동적으로 프로미스를 리턴하는 비동기처리함수가 됨
+async function main(){
+  const res = await helloAsync()
+  console.log(res);
+}
+main();
