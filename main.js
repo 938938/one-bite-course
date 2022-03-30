@@ -300,3 +300,12 @@ async function main(){
   console.log(res);
 }
 main();
+
+//api호출
+
+async function getData(){
+  let rawResponse = await fetch('https://jsonplaceholder.typicode.com/posts'); // fetch() : api호출을 할 수 있도록 도와주는 내장함수
+  let jsonResponse = await rawResponse.json();
+  console.log(jsonResponse);
+}
+getData();
